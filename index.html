@@ -210,7 +210,7 @@
             { step: 'bank_upload', botPrompt: "Please use the '+' button to upload your last 12 months Bank Statement (e-PDF)", userAction: "", agentNotification: "BSA_AGENT, TRIANGULATION_ENSEMBLE_MODEL: Extracting text & metadata.\n> Task: Run transaction pattern analysis\n> Task: BSA health score and EWS alerts meta", status: "BSA Parsing: Processing", isUpload: true },
             { step: 'fin_prompt', botPrompt: "Your maximum limit can be enhanced by uploading financial performance data. Would you like to upload your latest CA certified financials?", userAction: "", agentNotification: "FINANCIAL_OCR_ORCHESTRATOR: Listening for document stream. Readiness: 100%.", status: "Ready" },
             { step: 'fin_upload', botPrompt: "Please use the '+' button to upload the financial statements (P&L, Balance Sheet).", userAction: "", agentNotification: "FINANCIAL_AGENT, FINANCIAL_PERFORMANCE AGENT, PEER COMPARISON AGENT ACTIVATED for PD and triggering into TRIANGULATION MODEL: Parsing P&L and Balance Sheet.\n> Task: Compute financial features \n> Task: Flag accounting inconsistencies via forensic model", status: "Financial Analysis: Complete", isUpload: true },
-            { step: 'offer', botPrompt: "Analysis complete. We have an offer as follows:\n\nThanks for providing the documents. Based on your requested amount and our analysis of your cash flows, financials, and industry benchmarks, here’s a suggested offer:\n\nLoan Offer:\n- Approved Limit: ₹1,000,0,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months, renewal based\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer?", userAction: "", agentNotification: "CREDIT_POLICY_ENGINE: Offer finalization.\n> Composite Risk Score: 78\n> Model Confidence: 89%\n> LTV Compliance: Checked", status: "Offer Accepted" },
+            { step: 'offer', botPrompt: "Analysis complete. We have an offer as follows:\n\nThanks for providing the documents. Based on your requested amount and our analysis of your cash flows, financials, and industry benchmarks, here’s a suggested offer:\n\nLoan Offer:\n- Approved Limit: ₹1,00,00,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months, renewal based\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer?", userAction: "", agentNotification: "CREDIT_POLICY_ENGINE: Offer finalization.\n> Composite Risk Score: 78\n> Model Confidence: 89%\n> LTV Compliance: Checked", status: "Offer Accepted" },
             { step: 'end', botPrompt: "Thank you for choosing AIWA. You can expect a call back within 15 minutes.", userAction: "", agentNotification: "WORKFLOW_EXIT: Dispatching lead data to Salesforce.\n> Notification: Sent to RM via Slack integration", status: "Lead Exported" }
         ];
 
@@ -402,14 +402,13 @@
                     userInput.placeholder = "Type your response...";
                     userInput.disabled = false;
                     sendBtn.disabled = false;
-                    userInput.value = ""; // Keep response blank as requested
+                    userInput.value = ""; 
                     userInput.focus();
                 }
             }, 1500);
         }
 
         function handleUserSubmit(code = null, customVal = null) {
-            // We need a functional value for the logic, but the UI display is handled separately
             const internalVal = customVal || userInput.value.trim() || activeJourney[currentStepIndex].userAction || "Yes";
             
             const currentData = activeJourney[currentStepIndex];
@@ -418,7 +417,7 @@
             if (currentData.step === 8 && activeJourney === journeyNonGST) userData.loanAmount = internalVal;
             if (currentData.step === 9 && activeJourney === journeyNonGST) userData.revenue = internalVal;
 
-            userInput.value = ""; // Always ensure it is blank
+            userInput.value = ""; 
             userInput.disabled = true;
             sendBtn.disabled = true;
             plusIcon.classList.remove('upload-pulse', 'text-[#22368C]');
@@ -588,12 +587,12 @@
                 if (i < text.length) { 
                     tc.textContent += text.charAt(i); 
                     i++; 
-                    setTimeout(t, 25);
+                    setTimeout(t, 45); // Reduced speed from 25 to 45ms per char
                 }
                 else { 
                     tc.classList.remove('typing-cursor'); 
                     sc.classList.remove('opacity-0');
-                    if (callback) setTimeout(callback, 800);
+                    if (callback) setTimeout(callback, 1200); // Increased post-log pause for realism
                 }
             }
             t();
