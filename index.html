@@ -206,12 +206,12 @@
         };
 
         const sharedUploadSteps = [
-            { step: 'bank_prompt', botPrompt: "Great. While I assess your business on the aforementioned data. Would you like to share your last 12 months bank statements from primary bank?", userAction: "Yes", agentNotification: "BSA_ORCHESTRATOR: Awaiting document hook. Triggering standby for feature_engineering_BSA_module", status: "WIP" },
-            { step: 'bank_upload', botPrompt: "Please use the '+' button to upload your last 12 months Bank Statement (e-PDF)", userAction: "Upload PDF", agentNotification: "BSA_AGENT, TRIANGULATION_ENSEMBLE_MODEL: Extracting text & metadata.\n> Task: Run transaction pattern analysis\n> Task: BSA health score and EWS alerts meta", status: "BSA Parsing: Processing", isUpload: true },
-            { step: 'fin_prompt', botPrompt: "Your maximum limit can be enhanced by uploading financial performance data. Would you like to upload your latest CA certified financials?", userAction: "OK", agentNotification: "FINANCIAL_OCR_ORCHESTRATOR: Listening for document stream. Readiness: 100%.", status: "Ready" },
-            { step: 'fin_upload', botPrompt: "Please use the '+' button to upload the financial statements (P&L, Balance Sheet).", userAction: "Upload Docs", agentNotification: "FINANCIAL_AGENT, FINANCIAL_PERFORMANCE AGENT, PEER COMPARISON AGENT ACTIVATED for PD and triggering into TRIANGULATION MODEL: Parsing P&L and Balance Sheet.\n> Task: Compute financial features \n> Task: Flag accounting inconsistencies via forensic model", status: "Financial Analysis: Complete", isUpload: true },
-            { step: 'offer', botPrompt: "Analysis complete. We have an offer as follows:\n\nThanks for providing the documents. Based on your requested amount and our analysis of your cash flows, financials, and industry benchmarks, here’s a suggested offer:\n\nLoan Offer:\n- Approved Limit: ₹1,000,0,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months, renewal based\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer?", userAction: "Yes", agentNotification: "CREDIT_POLICY_ENGINE: Offer finalization.\n> Composite Risk Score: 78\n> Model Confidence: 89%\n> LTV Compliance: Checked", status: "Offer Accepted" },
-            { step: 'end', botPrompt: "Thank you for choosing AIWA. You can expect a call back within 15 minutes.", userAction: "Bye", agentNotification: "WORKFLOW_EXIT: Dispatching lead data to Salesforce.\n> Notification: Sent to RM via Slack integration", status: "Lead Exported" }
+            { step: 'bank_prompt', botPrompt: "Great. While I assess your business on the aforementioned data. Would you like to share your last 12 months bank statements from primary bank?", userAction: "", agentNotification: "BSA_ORCHESTRATOR: Awaiting document hook. Triggering standby for feature_engineering_BSA_module", status: "WIP" },
+            { step: 'bank_upload', botPrompt: "Please use the '+' button to upload your last 12 months Bank Statement (e-PDF)", userAction: "", agentNotification: "BSA_AGENT, TRIANGULATION_ENSEMBLE_MODEL: Extracting text & metadata.\n> Task: Run transaction pattern analysis\n> Task: BSA health score and EWS alerts meta", status: "BSA Parsing: Processing", isUpload: true },
+            { step: 'fin_prompt', botPrompt: "Your maximum limit can be enhanced by uploading financial performance data. Would you like to upload your latest CA certified financials?", userAction: "", agentNotification: "FINANCIAL_OCR_ORCHESTRATOR: Listening for document stream. Readiness: 100%.", status: "Ready" },
+            { step: 'fin_upload', botPrompt: "Please use the '+' button to upload the financial statements (P&L, Balance Sheet).", userAction: "", agentNotification: "FINANCIAL_AGENT, FINANCIAL_PERFORMANCE AGENT, PEER COMPARISON AGENT ACTIVATED for PD and triggering into TRIANGULATION MODEL: Parsing P&L and Balance Sheet.\n> Task: Compute financial features \n> Task: Flag accounting inconsistencies via forensic model", status: "Financial Analysis: Complete", isUpload: true },
+            { step: 'offer', botPrompt: "Analysis complete. We have an offer as follows:\n\nThanks for providing the documents. Based on your requested amount and our analysis of your cash flows, financials, and industry benchmarks, here’s a suggested offer:\n\nLoan Offer:\n- Approved Limit: ₹1,000,0,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months, renewal based\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer?", userAction: "", agentNotification: "CREDIT_POLICY_ENGINE: Offer finalization.\n> Composite Risk Score: 78\n> Model Confidence: 89%\n> LTV Compliance: Checked", status: "Offer Accepted" },
+            { step: 'end', botPrompt: "Thank you for choosing AIWA. You can expect a call back within 15 minutes.", userAction: "", agentNotification: "WORKFLOW_EXIT: Dispatching lead data to Salesforce.\n> Notification: Sent to RM via Slack integration", status: "Lead Exported" }
         ];
 
         const journeyGST = [
@@ -229,11 +229,11 @@
             { step: 7, botPrompt: "This is great progress, Anubhav. Let’s continue with your loan application. I have your line of business as services and broad industry as advertisement, operating since 2019. Does that sound right?", userAction: "Yes", agentNotification: "SECTORAL_RISK_AGENT: Confirming vintage and industry model, and trigger INDUSTRY_PEER_RISK_AGENT", status: "Verification" },
             { step: 8, botPrompt: "Can you help with the your revenue from operations in latest financial year? Do mention in lakh or cr.", userAction: "11.25 crore", agentNotification: "OFFER_INPUT: Extracting numerical features for financial benchmarking", status: "Revenue Mapped" },
             { step: 9, botPrompt: "Can you help with the loan amount? Do mention in lakh or cr.", userAction: "1.05 crore", agentNotification: "OFFER_INPUT: Extracting for initial offer", status: "Eligiblity computation initiated by BRE_Agent" },
-            { step: 8.1, botPrompt: "What is the purpose of this loan?", userAction: "Select Purpose...", agentNotification: "CLASSIFICATION_AGENT: Mapping loan purpose to product sub-category.", status: "Input Needed", isPurposeDropdown: true },
+            { step: 8.1, botPrompt: "What is the purpose of this loan?", userAction: "", agentNotification: "CLASSIFICATION_AGENT: Mapping loan purpose to product sub-category.", status: "Input Needed", isPurposeDropdown: true },
             { 
                 step: 10, 
                 botPrompt: "placeholder", 
-                userAction: "This is ok", 
+                userAction: "", 
                 agentNotification: "SUMMARY_VALIDATION_AGENT: Finalizing profile metadata and data integrity check.", 
                 status: "Summary Confirmed",
                 isSummary: true
@@ -249,7 +249,7 @@
             { 
                 step: 14.2, 
                 botPrompt: "Great. We have found the following active GSTNs for this entity. Please select the GSTNs for which you would like to provide consent:", 
-                userAction: "Select GSTNs", 
+                userAction: "", 
                 agentNotification: "GSTN_SELECTION_AGENT: Mapping nodes for multi-GST data aggregation.", 
                 status: "Consent Mapping",
                 isMultiSelect: true,
@@ -278,7 +278,7 @@
             { 
                 step: 7, 
                 botPrompt: "I have got your line of business as trading.Please select your broad industry category.", 
-                userAction: "Select Industry...", 
+                userAction: "", 
                 agentNotification: "SECTOR_AGENT: Benchmarking industry-specific risk parameters.", 
                 status: "Awaiting Selection",
                 isIndustryDropdown: true 
@@ -300,7 +300,7 @@
             { 
                 step: 10, 
                 botPrompt: "What is the purpose of this loan?", 
-                userAction: "Select Purpose...", 
+                userAction: "", 
                 agentNotification: "CLASSIFICATION_AGENT: Mapping loan purpose to product sub-category.", 
                 status: "Input Needed", 
                 isPurposeDropdown: true 
@@ -308,7 +308,7 @@
             { 
                 step: 11, 
                 botPrompt: "placeholder", 
-                userAction: "This is ok", 
+                userAction: "", 
                 agentNotification: "SUMMARY_VALIDATION_AGENT: Finalizing profile metadata.", 
                 status: "Summary Confirmed",
                 isSummary: true
@@ -320,7 +320,6 @@
             { step: 1, botPrompt: "Hello. This is AIWA. Are you looking to apply for a business loan?", userAction: "Apply for a loan", agentNotification: "Lead Created in CRM.", status: "Lead: AIWA-BIZ-7729" },
             { step: 2, botPrompt: "Please enter mobile number for an OTP based verification. This will be used for identity verification and as a consent for CIC bureau pull including further communication", userAction: "9167880160", agentNotification: "FRAUD_CHECK_AGENT: Scanning blacklist and mobile vintage.", status: "Trigger OTP" },
             { step: 3, botPrompt: "Thank you. I’ve sent a one-time verification code (OTP) to this number.", userAction: "897123", 
-            agentNotification: "OTP_VAL: Authenticating session token and trigger BUREAU_AGENT: Task - soft pull ", 
             agentNotification: "OTP_VAL: Authenticating session token\n\nBUREAU_AGENT: Triggered\n> Task: Verify NTC\n\nTRIGGER soft-pull features\n>TRIGGER BUREAU_SCORE_AGENT and TRIANGULATION_MODEL features", 
             status: "Verification" },
             { step: 4, botPrompt: "Are you a GST registered business?", userAction: "Yes", agentNotification: "Routing Logic: Directing to workflow_02=GST_registered.", status: "Awaiting Input" },
@@ -349,7 +348,7 @@
                     handleUserSubmit(null, `Uploaded: ${Array.from(e.target.files).map(f => f.name).join(", ")}...`);
                     fileInput.value = ""; 
                 }
-            };
+            };  
         }
 
         function renderBotStep(index) {
@@ -379,14 +378,12 @@
 
                 appendBotMessage(prompt);
                 
-                // Now trigger the "User Typing" simulation before making input interactive
                 triggerUserTypingSimulation(data);
 
             }, 800);
         }
 
         function triggerUserTypingSimulation(data) {
-            // Show "User is typing..."
             userTypingIndicator.classList.remove('hidden');
             
             setTimeout(() => {
@@ -405,35 +402,35 @@
                     userInput.placeholder = "Type your response...";
                     userInput.disabled = false;
                     sendBtn.disabled = false;
-                    userInput.value = data.userAction || "";
+                    userInput.value = ""; // Keep response blank as requested
                     userInput.focus();
                 }
-            }, 1500); // 1.5s delay for realistic feeling
+            }, 1500);
         }
 
         function handleUserSubmit(code = null, customVal = null) {
-            const val = customVal || userInput.value.trim();
-            if (!val) return;
-
+            // We need a functional value for the logic, but the UI display is handled separately
+            const internalVal = customVal || userInput.value.trim() || activeJourney[currentStepIndex].userAction || "Yes";
+            
             const currentData = activeJourney[currentStepIndex];
             
-            if (currentData.step === 5 && activeJourney === journeyNonGST) userData.pan = val;
-            if (currentData.step === 8 && activeJourney === journeyNonGST) userData.loanAmount = val;
-            if (currentData.step === 9 && activeJourney === journeyNonGST) userData.revenue = val;
+            if (currentData.step === 5 && activeJourney === journeyNonGST) userData.pan = internalVal;
+            if (currentData.step === 8 && activeJourney === journeyNonGST) userData.loanAmount = internalVal;
+            if (currentData.step === 9 && activeJourney === journeyNonGST) userData.revenue = internalVal;
 
-            userInput.value = "";
+            userInput.value = ""; // Always ensure it is blank
             userInput.disabled = true;
             sendBtn.disabled = true;
             plusIcon.classList.remove('upload-pulse', 'text-[#22368C]');
 
-            appendUserMessage(val, true, () => {
-                if (currentData.isSummary && val.toLowerCase().includes('no')) {
+            appendUserMessage(internalVal, true, () => {
+                if (currentData.isSummary && internalVal.toLowerCase().includes('no')) {
                     showEditableSummary();
                     return;
                 }
 
                 if (currentData.step === 4 && currentStepIndex === 3) {
-                    if (val.toLowerCase().includes('no')) {
+                    if (internalVal.toLowerCase().includes('no')) {
                         activeJourney = [...initialSteps, ...journeyNonGST];
                     } else {
                         activeJourney = [...initialSteps, ...journeyGST];
@@ -591,12 +588,12 @@
                 if (i < text.length) { 
                     tc.textContent += text.charAt(i); 
                     i++; 
-                    setTimeout(t, 25); // Increased from 5ms to 25ms for a more realistic orchestration feel
+                    setTimeout(t, 25);
                 }
                 else { 
                     tc.classList.remove('typing-cursor'); 
                     sc.classList.remove('opacity-0');
-                    if (callback) setTimeout(callback, 800); // Slight delay after log completion before next bot action
+                    if (callback) setTimeout(callback, 800);
                 }
             }
             t();
