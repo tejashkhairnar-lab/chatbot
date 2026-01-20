@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knight Fintech - AIWA Loan Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --kf-blue: #22368C;
+            --kf-light-blue: #31D2F2;
+            --kf-dark: #0F1115;
+            --kf-bg: #F4F6F9;
+        }
+        
+        body { font-family: 'Inter', sans-serif; background-color: var(--kf-bg); }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(49, 210, 242, 0.2); border-radius: 10px; }
+
+        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .log-entry { border-left: 2px solid #31D2F2; background: rgba(49, 210, 242, 0.03); margin-bottom: 1rem; padding: 0.75rem; border-radius: 0 4px 4px 0; }
+        
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        .typing-cursor::after { content: '|'; animation: blink 0.8s infinite; color: #31D2F2; }
+        .user-typing-cursor::after { content: '|'; animation: blink 0.8s infinite; color: white; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .custom-dropdown {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            background: white;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            margin-bottom: 8px;
+            z-index: 50;
+            box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .gstn-chip { transition: all 0.2s; cursor: pointer; }
+        .gstn-chip.selected { background-color: #22368C; color: white; border-color: #22368C; }
+
+        .upload-pulse { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-white border-b border-gray-200 h-16 flex-none flex items-center justify-between px-6 shadow-sm z-10">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-[#22368C] rounded flex items-center justify-center text-white font-bold text-lg">K</div>
+                <div class="flex flex-col">
+                    <span class="text-[#22368C] font-bold text-lg leading-tight tracking-tight uppercase text-xs md:text-lg">Knight Fintech</span>
+                    <span class="text-[8px] md:text-[10px] text-gray-400 tracking-[0.2em] font-semibold uppercase">Assessment Intelligence with AI (AIWA) Agentic Orchestrator</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 text-[#22368C] text-[10px] font-bold rounded-full border border-blue-100 uppercase tracking-wider">
+                <div class="w-1.5 h-1.5 bg-[#31D2F2] rounded-full animate-pulse"></div>
+                System Active
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        <div class="flex-1 flex flex-col relative bg-white border-r border-gray-200 min-w-[320px]">
+            <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth pb-48">
+                <div class="text-center">
+                    <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-widest">Unsecured Business loans: Credit Underwriting</span>
+                </div>
+            </div>
+
+            <!-- Bot Typing -->
+            <div id="typing-indicator" class="hidden absolute bottom-40 left-8 bg-white border border-gray-100 shadow-xl px-4 py-3 rounded-2xl rounded-tl-none">
+                <div class="flex gap-1">
+                    <div class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></div>
+                </div>
+            </div>
+
+            <!-- User Typing Simulation -->
+            <div id="user-typing-indicator" class="hidden absolute bottom-40 right-8 bg-blue-50 border border-blue-100 shadow-xl px-4 py-3 rounded-2xl rounded-tr-none">
+                <span class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">User is typing...</span>
+            </div>
+
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 p-4 md:p-6">
+                <div class="max-w-2xl mx-auto flex flex-col gap-2 relative">
+                    <div id="dropdown-menu" class="hidden custom-dropdown"></div>
+                    <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-2 px-4 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-[#22368C] transition-all">
+                        <input type="file" id="real-file-input" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.xlsx" multiple>
+                        <button id="upload-trigger" class="p-2 text-gray-400 hover:text-[#22368C] transition-colors"><i data-lucide="plus-circle" id="plus-icon" class="w-5 h-5"></i></button>
+                        <input type="text" id="user-input" placeholder="Type your response..." class="flex-1 bg-transparent border-none outline-none text-sm py-2 text-gray-700" autocomplete="off">
+                        <button id="send-btn" class="p-2 bg-[#22368C] text-white rounded-lg hover:bg-blue-800 transition-colors disabled:opacity-50"><i data-lucide="send" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex w-[45%] max-w-[600px] bg-[#0F1115] flex-col shadow-2xl overflow-hidden">
+            <div class="bg-[#16191E] p-4 flex items-center justify-between border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <div class="p-1 bg-[#31D2F2]/10 rounded"><i data-lucide="cpu" class="w-4 h-4 text-[#31D2F2]"></i></div>
+                    <span class="text-xs font-mono text-gray-300 font-bold tracking-widest uppercase">System Execution Log</span>
+                </div>
+            </div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-5 font-mono text-[11px] leading-relaxed text-gray-400 space-y-2">
+                <div class="text-[#31D2F2]/40 italic mb-4">-- Kernel Initialized. Underwriting Agent Activity --</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loanPurposeMaster = [
+            { name: "Working Capital / Cash Flow Management", code: "WC" },
+            { name: "Business Expansion / Scale-Up", code: "EXP" },
+            { name: "Inventory / Stock Purchase", code: "INV" },
+            { name: "Machinery / Equipment Purchase", code: "EQP" },
+            { name: "Debt Consolidation / Refinancing", code: "REF" }
+        ];
+
+        const industryData = [
+            { category: "Agri, Fishing & Mining", items: [
+                { label: "Production of crops and animals", code: "IND-101" },
+                { label: "Forestry and logging", code: "IND-102" },
+                { label: "Fishing and aquaculture", code: "IND-103" },
+                { label: "Support activities to agriculture & hunting", code: "IND-104" },
+                { label: "Mining of Coal and lignite", code: "IND-105" },
+                { label: "Extraction of Crude Petroleum & Natural gas", code: "IND-106" },
+                { label: "Mining of Metal Ores", code: "IND-107" },
+                { label: "Other Mining & Quarrying Activities", code: "IND-108" },
+                { label: "Mining Support Services activities", code: "IND-109" }
+            ]},
+            { category: "Manufacturing", items: [
+                { label: "Food, beverages and tobacco products", code: "IND-201" },
+                { label: "Textile, leather and other apparel products", code: "IND-202" },
+                { label: "Wood, paper and furniture products", code: "IND-203" },
+                { label: "Printing, reproduction of recorded media", code: "IND-204" },
+                { label: "Coke and refined petroleum products", code: "IND-205" },
+                { label: "Chemicals, Pharma and Botanical products", code: "IND-206" },
+                { label: "Metal and metal products", code: "IND-207" },
+                { label: "Plastic, rubber and fabricated metal products", code: "IND-208" },
+                { label: "Computer, electronic and scientific equipment", code: "IND-209" },
+                { label: "Electrical and Transport equipment", code: "IND-210" },
+                { label: "Motor vehicles, trailers and semi-trailers", code: "IND-211" },
+                { label: "Repair & installation of machinery", code: "IND-212" },
+                { label: "Other manufacturing (Jewelry, Medical, etc.)", code: "IND-213" }
+            ]},
+            { category: "Utilities & Construction", items: [
+                { label: "Electric power generation and distribution", code: "IND-301" },
+                { label: "Manufacture and distribution of gas", code: "IND-302" },
+                { label: "Steam and air conditioning supply", code: "IND-303" },
+                { label: "Water collection and supply", code: "IND-304" },
+                { label: "Sewerage and Waste management", code: "IND-305" },
+                { label: "Buildings Construction", code: "IND-401" },
+                { label: "Roads, railways, Utility projects", code: "IND-402" },
+                { label: "Specialized construction (Electrical, Plumbing)", code: "IND-403" }
+            ]},
+            { category: "Trading & Transport", items: [
+                { label: "Wholesale Trading", code: "IND-501" },
+                { label: "Retail Trading", code: "IND-502" },
+                { label: "Land Transport (Road, Rail, Pipeline)", code: "IND-601" },
+                { label: "Water and Air transport", code: "IND-602" },
+                { label: "Warehousing and storage", code: "IND-603" },
+                { label: "Postal & Courier activities", code: "IND-604" }
+            ]},
+            { category: "Services & Tech", items: [
+                { label: "Accommodation and Food services", code: "IND-701" },
+                { label: "Publishing and Software systems", code: "IND-702" },
+                { label: "Motion picture and Broadcasting", code: "IND-703" },
+                { label: "Telecommunication and Data hosting", code: "IND-704" },
+                { label: "Banking and Financial services", code: "IND-801" },
+                { label: "Insurance and Pension activities", code: "IND-802" },
+                { label: "Real estate activities", code: "IND-803" },
+                { label: "Legal, Accounting and Consultancy", code: "IND-901" },
+                { label: "Scientific R&D and Advertising", code: "IND-902" },
+                { label: "HR, Security and Office Admin services", code: "IND-903" },
+                { label: "Education and Health services", code: "IND-904" },
+                { label: "Creative, Arts and Entertainment", code: "IND-905" }
+            ]}
+        ];
+
+        let userData = {
+            legalName: "Standard Publicity Private Limited",
+            pan: "AADCS8891H",
+            industry: "Services - Advertisement",
+            revenue: "11.25 crore",
+            loanPurpose: "Working capital needs",
+            loanAmount: "1.05 crore"
+        };
+
+        const sharedUploadSteps = [
+            { step: 'bank_prompt', botPrompt: "Great. While I assess your business on the aforementioned data. Would you like to share your last 12 months bank statements from primary bank?", userAction: "Yes", agentNotification: "BSA_ORCHESTRATOR: Awaiting document hook. Triggering standby for feature_engineering_BSA_module", status: "WIP" },
+            { step: 'bank_upload', botPrompt: "Please use the '+' button to upload your last 12 months Bank Statement (e-PDF)", userAction: "Upload PDF", agentNotification: "BSA_AGENT, TRIANGULATION_ENSEMBLE_MODEL: Extracting text & metadata.\n> Task: Run transaction pattern analysis\n> Task: BSA health score and EWS alerts meta", status: "BSA Parsing: Processing", isUpload: true },
+            { step: 'fin_prompt', botPrompt: "Your maximum limit can be enhanced by uploading financial performance data. Would you like to upload your latest CA certified financials?", userAction: "OK", agentNotification: "FINANCIAL_OCR_ORCHESTRATOR: Listening for document stream. Readiness: 100%.", status: "Ready" },
+            { step: 'fin_upload', botPrompt: "Please use the '+' button to upload the financial statements (P&L, Balance Sheet).", userAction: "Upload Docs", agentNotification: "FINANCIAL_AGENT, FINANCIAL_PERFORMANCE AGENT, PEER COMPARISON AGENT ACTIVATED for PD and triggering into TRIANGULATION MODEL: Parsing P&L and Balance Sheet.\n> Task: Compute financial features \n> Task: Flag accounting inconsistencies via forensic model", status: "Financial Analysis: Complete", isUpload: true },
+            { step: 'offer', botPrompt: "Analysis complete. We have an offer as follows:\n\nThanks for providing the documents. Based on your requested amount and our analysis of your cash flows, financials, and industry benchmarks, here’s a suggested offer:\n\nLoan Offer:\n- Approved Limit: ₹1,000,0,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months, renewal based\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer?", userAction: "Yes", agentNotification: "CREDIT_POLICY_ENGINE: Offer finalization.\n> Composite Risk Score: 78\n> Model Confidence: 89%\n> LTV Compliance: Checked", status: "Offer Accepted" },
+            { step: 'end', botPrompt: "Thank you for choosing AIWA. You can expect a call back within 15 minutes.", userAction: "Bye", agentNotification: "WORKFLOW_EXIT: Dispatching lead data to Salesforce.\n> Notification: Sent to RM via Slack integration", status: "Lead Exported" }
+        ];
+
+        const journeyGST = [
+            { 
+                step: 3, 
+                botPrompt: "Please share your active Primary GST number associated with your core business.", 
+                userAction: "07AADCS8891H1ZU", 
+                agentNotification: "INITIALIZING MULTI-AGENT WORKFLOW [ID: WF_COLLECT_01]\n\nSTEP 1: GSTN_AGENT Triggered\n> Task: Extract Trade Name, Legal Name, active GSTNs, and PAN into temp_master\n\nSTEP 2: PARALLEL AGENT EXECUTION\n> LEGAL_AGENT: Pulling name from temp_master for parallel extraction from e-courts, NCLT, CIBIL suit, DRT. \n> BEHAVIOURAL_AGENT: Validating customer presence in internal DB (Response: No)\n> EPFO_AGENT: Name-based extraction from EPFO database\n> NEWS_AGENT: Sentiment and name-based news scan\n> RATINGS_AGENT: Triggering external rating pull for entity", 
+                status: "Data Phase 1 Complete, Not Found in Internal DB = NewCustomer" 
+            },
+            { step: 4, botPrompt: "Fetched details for 'Standard Publicity Private Limited'. Is this correct?", userAction: "Yes", agentNotification: "VALIDATION_AGENT: Cross-referencing trade name with GST database.", status: "Verified" },
+            { step: 5, botPrompt: "Being an MCA registered business, could you please provide your CIN?", userAction: "U74300WB1987PTC041861", agentNotification: "MCA_ORCHESTRATOR: Syncing with MCA Master Data for director names and status.", status: "MCA Sync Complete" },
+            { step: 5.1, botPrompt: "Great. While I build your businesses's primary profile, I’ll need a few details about you, as the applicant. Please enter your full name (as per official records)", userAction: "Anubhav Sarkar", agentNotification: "FUZZY_MATCH_AGENT: Comparing name against Director Master list from MCA.", status: "Identity Match" },
+            { step: 6, botPrompt: "Please enter your DIN, if you are an active director or partner. If not, please specify your role as the authorised signatory", userAction: "05171789", agentNotification: "DIRECTOR_VERIFICATION_AGENT: Validating DIN state and eligibility.", status: "Role Verified" },
+            { step: 7, botPrompt: "This is great progress, Anubhav. Let’s continue with your loan application. I have your line of business as services and broad industry as advertisement, operating since 2019. Does that sound right?", userAction: "Yes", agentNotification: "SECTORAL_RISK_AGENT: Confirming vintage and industry model, and trigger INDUSTRY_PEER_RISK_AGENT", status: "Verification" },
+            { step: 8, botPrompt: "Can you help with the your revenue from operations in latest financial year? Do mention in lakh or cr.", userAction: "11.25 crore", agentNotification: "OFFER_INPUT: Extracting numerical features for financial benchmarking", status: "Revenue Mapped" },
+            { step: 9, botPrompt: "Can you help with the loan amount? Do mention in lakh or cr.", userAction: "1.05 crore", agentNotification: "OFFER_INPUT: Extracting for initial offer", status: "Eligiblity computation initiated by BRE_Agent" },
+            { step: 8.1, botPrompt: "What is the purpose of this loan?", userAction: "Select Purpose...", agentNotification: "CLASSIFICATION_AGENT: Mapping loan purpose to product sub-category.", status: "Input Needed", isPurposeDropdown: true },
+            { 
+                step: 10, 
+                botPrompt: "placeholder", 
+                userAction: "This is ok", 
+                agentNotification: "SUMMARY_VALIDATION_AGENT: Finalizing profile metadata and data integrity check.", 
+                status: "Summary Confirmed",
+                isSummary: true
+            },
+            { 
+                step: 11, 
+                botPrompt: "We have preliminary offer as follows:\n\nBased on your requested amount and our analysis, here’s a suggested offer:\n\n**Loan Offer:**\n- Approved Limit: ₹70,00,000\n- Facility: Revolving Working Capital\n- Tenure: 12 months\n- Interest Rate: 11.25% per annum\n\nAre you ok with the current offer? If not, our Virtual RM has suggested to enhance the offer based on GST consent. Would you like to proceed with the same?", 
+                userAction: "Yes", 
+                agentNotification: "OFFER_STRATEGY_ENGINE: User opted for enhanced limit logic. Triggering upsell flow.", 
+                status: "Upsell Opt-in" 
+            },
+            { step: 14.1, botPrompt: "To provide GST API consent, you need to log into the GST Portal > go to 'My Profile' > 'Manage API Access', enable it (set to 'Yes'), choose a duration, and confirm. Once done, you would need to enter username and OTP associated with each GST number selected confirming API pull. Shall we begin?", userAction: "Yes", agentNotification: "GST_CONSENT_ORCHESTRATOR: Requesting digital consent token for secured data fetch.", status: "Consent Pending" },
+            { 
+                step: 14.2, 
+                botPrompt: "Great. We have found the following active GSTNs for this entity. Please select the GSTNs for which you would like to provide consent:", 
+                userAction: "Select GSTNs", 
+                agentNotification: "GSTN_SELECTION_AGENT: Mapping nodes for multi-GST data aggregation.", 
+                status: "Consent Mapping",
+                isMultiSelect: true,
+                options: ["07AADCS8891H1ZU", "27AABCR1234D1Z7", "19AAECP1122G1Z3"]
+            },
+            { step: 14.3, botPrompt: "Please enter the username for 07AADCS8891H1ZU.", userAction: "userstandard_01", agentNotification: "AUTH_ORCHESTRATOR: Initializing node session with GST portal.", status: "Auth Started" },
+            { step: 14.4, botPrompt: "We have sent an OTP on the mobile number registered with aforementioned GSTIN.", userAction: "899834", agentNotification: "OTP_VALIDATION_AGENT: Verifying second factor for portal access.", status: "GSTN Verified" },
+            ...sharedUploadSteps
+        ];
+
+        const journeyNonGST = [
+            { 
+                step: 5, 
+                botPrompt: "Understood. Please enter the PAN for this entity.", 
+                userAction: "AAHFR1988B", 
+                agentNotification: "PAN_VAL_AGENT: Validating PAN status and owner structure from NSDL.", 
+                status: "PAN Verified" 
+            },
+            { 
+                step: 6, 
+                botPrompt: "Great. I have your name as \"Rajchandra Agencies\". If you have Udyam registration, please enter the same or enter No.", 
+                userAction: "UDYAM-MH-18-0507851", 
+                agentNotification: "UDYAM_AGENT: Checking MSME classification status.", 
+                status: "Registration Check Done" 
+            },
+            { 
+                step: 7, 
+                botPrompt: "I have got your line of business as trading.Please select your broad industry category.", 
+                userAction: "Select Industry...", 
+                agentNotification: "SECTOR_AGENT: Benchmarking industry-specific risk parameters.", 
+                status: "Awaiting Selection",
+                isIndustryDropdown: true 
+            },
+            { 
+                step: 8, 
+                botPrompt: "What is the loan amount required? (Please mention in Lakh or Cr)", 
+                userAction: "25 Lakh", 
+                agentNotification: "EXPOSURE_AGENT: Calculating DPD and leverage ratios for requested ticket size.", 
+                status: "Amount Logged" 
+            },
+            { 
+                step: 9, 
+                botPrompt: "What is your annual revenue from operations? (Approximate is fine)", 
+                userAction: "1.2 Crore", 
+                agentNotification: "FIN_MODELING_AGENT: Calibrating risk buckets based on stated turnover.", 
+                status: "Revenue Logged" 
+            },
+            { 
+                step: 10, 
+                botPrompt: "What is the purpose of this loan?", 
+                userAction: "Select Purpose...", 
+                agentNotification: "CLASSIFICATION_AGENT: Mapping loan purpose to product sub-category.", 
+                status: "Input Needed", 
+                isPurposeDropdown: true 
+            },
+            { 
+                step: 11, 
+                botPrompt: "placeholder", 
+                userAction: "This is ok", 
+                agentNotification: "SUMMARY_VALIDATION_AGENT: Finalizing profile metadata.", 
+                status: "Summary Confirmed",
+                isSummary: true
+            },
+            ...sharedUploadSteps
+        ];
+
+        const initialSteps = [
+            { step: 1, botPrompt: "Hello. This is AIWA. Are you looking to apply for a business loan?", userAction: "Apply for a loan", agentNotification: "Lead Created in CRM.", status: "Lead: AIWA-BIZ-7729" },
+            { step: 2, botPrompt: "Please enter mobile number for an OTP based verification. This will be used for identity verification and as a consent for CIC bureau pull including further communication", userAction: "9167880160", agentNotification: "FRAUD_CHECK_AGENT: Scanning blacklist and mobile vintage.", status: "Trigger OTP" },
+            { step: 3, botPrompt: "Thank you. I’ve sent a one-time verification code (OTP) to this number.", userAction: "897123", 
+            agentNotification: "OTP_VAL: Authenticating session token and trigger BUREAU_AGENT: Task - soft pull ", 
+            agentNotification: "OTP_VAL: Authenticating session token\n\nBUREAU_AGENT: Triggered\n> Task: Verify NTC\n\nTRIGGER soft-pull features\n>TRIGGER BUREAU_SCORE_AGENT and TRIANGULATION_MODEL features", 
+            status: "Verification" },
+            { step: 4, botPrompt: "Are you a GST registered business?", userAction: "Yes", agentNotification: "Routing Logic: Directing to workflow_02=GST_registered.", status: "Awaiting Input" },
+        ];
+
+        let activeJourney = [...initialSteps];
+        let currentStepIndex = 0;
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const logContainer = document.getElementById('log-container');
+        const fileInput = document.getElementById('real-file-input');
+        const plusIcon = document.getElementById('plus-icon');
+        const userTypingIndicator = document.getElementById('user-typing-indicator');
+
+        function init() {
+            lucide.createIcons();
+            renderBotStep(0);
+            sendBtn.onclick = () => handleUserSubmit();
+            userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserSubmit(); });
+            
+            document.getElementById('upload-trigger').onclick = () => fileInput.click();
+            fileInput.onchange = (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleUserSubmit(null, `Uploaded: ${Array.from(e.target.files).map(f => f.name).join(", ")}...`);
+                    fileInput.value = ""; 
+                }
+            };
+        }
+
+        function renderBotStep(index) {
+            currentStepIndex = index;
+            const data = activeJourney[index];
+            sendBtn.disabled = true;
+            userInput.disabled = true;
+            plusIcon.classList.remove('upload-pulse', 'text-[#22368C]');
+            
+            showTyping(true);
+
+            setTimeout(() => {
+                showTyping(false);
+                let prompt = data.botPrompt;
+
+                if (data.isSummary) {
+                    prompt = `Thank you for the update. I’ve completed the credit check. Everything looks fine.\n\n` +
+                             `Summary:\n` +
+                             `- Business name: ${userData.legalName}\n` +
+                             `- PAN: ${userData.pan}\n` +
+                             `- Industry: ${userData.industry}\n` +
+                             `- Revenue: ${userData.revenue}\n` +
+                             `- Loan Amount: ${userData.loanAmount}\n` +
+                             `- Loan Purpose: ${userData.loanPurpose}\n\n` +
+                             `Please confirm if this is ok.`;
+                }
+
+                appendBotMessage(prompt);
+                
+                // Now trigger the "User Typing" simulation before making input interactive
+                triggerUserTypingSimulation(data);
+
+            }, 800);
+        }
+
+        function triggerUserTypingSimulation(data) {
+            // Show "User is typing..."
+            userTypingIndicator.classList.remove('hidden');
+            
+            setTimeout(() => {
+                userTypingIndicator.classList.add('hidden');
+                
+                if (data.isPurposeDropdown) {
+                    showDropdown(loanPurposeMaster, 'loanPurpose', false);
+                } else if (data.isIndustryDropdown) {
+                    showDropdown(industryData, 'industry', true);
+                } else if (data.isMultiSelect) {
+                    appendMultiSelect(data.options);
+                } else if (data.isUpload) {
+                    userInput.placeholder = "Click '+' to upload documents...";
+                    plusIcon.classList.add('upload-pulse', 'text-[#22368C]');
+                } else {
+                    userInput.placeholder = "Type your response...";
+                    userInput.disabled = false;
+                    sendBtn.disabled = false;
+                    userInput.value = data.userAction || "";
+                    userInput.focus();
+                }
+            }, 1500); // 1.5s delay for realistic feeling
+        }
+
+        function handleUserSubmit(code = null, customVal = null) {
+            const val = customVal || userInput.value.trim();
+            if (!val) return;
+
+            const currentData = activeJourney[currentStepIndex];
+            
+            if (currentData.step === 5 && activeJourney === journeyNonGST) userData.pan = val;
+            if (currentData.step === 8 && activeJourney === journeyNonGST) userData.loanAmount = val;
+            if (currentData.step === 9 && activeJourney === journeyNonGST) userData.revenue = val;
+
+            userInput.value = "";
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            plusIcon.classList.remove('upload-pulse', 'text-[#22368C]');
+
+            appendUserMessage(val, true, () => {
+                if (currentData.isSummary && val.toLowerCase().includes('no')) {
+                    showEditableSummary();
+                    return;
+                }
+
+                if (currentData.step === 4 && currentStepIndex === 3) {
+                    if (val.toLowerCase().includes('no')) {
+                        activeJourney = [...initialSteps, ...journeyNonGST];
+                    } else {
+                        activeJourney = [...initialSteps, ...journeyGST];
+                    }
+                }
+
+                streamLog(currentData.agentNotification, currentData.status, () => {
+                    if (currentStepIndex < activeJourney.length - 1) renderBotStep(currentStepIndex + 1);
+                });
+            });
+        }
+
+        function showDropdown(masterData, userKey, isCategorized) {
+            dropdownMenu.innerHTML = '';
+            dropdownMenu.classList.remove('hidden');
+            
+            if (isCategorized) {
+                masterData.forEach(cat => {
+                    const header = document.createElement('div');
+                    header.className = "px-4 py-2 bg-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-widest sticky top-0";
+                    header.textContent = cat.category;
+                    dropdownMenu.appendChild(header);
+                    
+                    cat.items.forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = "px-6 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-50 text-sm text-gray-700 transition-colors";
+                        row.textContent = item.label;
+                        row.onclick = () => {
+                            userData[userKey] = item.label;
+                            dropdownMenu.classList.add('hidden');
+                            handleUserSubmit(null, item.label);
+                        };
+                        dropdownMenu.appendChild(row);
+                    });
+                });
+            } else {
+                masterData.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = "px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0 text-sm text-gray-700";
+                    item.textContent = p.name;
+                    item.onclick = () => {
+                        userData[userKey] = p.name;
+                        dropdownMenu.classList.add('hidden');
+                        handleUserSubmit(null, p.name);
+                    };
+                    dropdownMenu.appendChild(item);
+                });
+            }
+        }
+
+        function appendMultiSelect(options) {
+            const container = document.createElement('div');
+            container.className = "flex flex-col gap-2 mt-2 fade-in-up";
+            const selected = new Set();
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "gstn-chip text-left px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white hover:border-[#22368C] flex justify-between items-center";
+                btn.innerHTML = `<span>${opt}</span><div class="w-4 h-4 rounded border border-gray-300 check-box"></div>`;
+                btn.onclick = () => {
+                    if (selected.has(opt)) { selected.delete(opt); btn.classList.remove('selected'); } 
+                    else { selected.add(opt); btn.classList.add('selected'); }
+                    submitBtn.disabled = selected.size === 0;
+                };
+                container.appendChild(btn);
+            });
+            const submitBtn = document.createElement('button');
+            submitBtn.className = "mt-2 bg-[#22368C] text-white py-3 rounded-xl text-sm font-bold disabled:opacity-40";
+            submitBtn.textContent = "Confirm Selected GSTNs";
+            submitBtn.disabled = true;
+            submitBtn.onclick = () => { container.remove(); handleUserSubmit(null, Array.from(selected).join(", ")); };
+            container.appendChild(submitBtn);
+            chatContainer.appendChild(container);
+            scrollChat();
+        }
+
+        function showEditableSummary() {
+            const fields = [
+                { label: "Business Name", key: "legalName" },
+                { label: "PAN", key: "pan" },
+                { label: "Industry", key: "industry" },
+                { label: "Revenue", key: "revenue" },
+                { label: "Loan Amount", key: "loanAmount" },
+                { label: "Purpose", key: "loanPurpose" }
+            ];
+            const container = document.createElement('div');
+            container.className = "fade-in-up bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-3 mt-4 shadow-inner";
+            fields.forEach(f => {
+                const row = document.createElement('div');
+                row.className = "flex flex-col gap-1";
+                row.innerHTML = `<label class="text-[10px] text-gray-500 font-bold ml-1">${f.label}</label>
+                    <input type="text" value="${userData[f.key]}" class="bg-white border border-gray-200 rounded-lg p-2 text-xs outline-none focus:border-[#22368C]" onchange="userData['${f.key}']=this.value">`;
+                container.appendChild(row);
+            });
+            const btn = document.createElement('button');
+            btn.className = "w-full bg-[#22368C] text-white py-2 rounded-lg text-xs font-bold mt-2 hover:bg-blue-800 transition-colors";
+            btn.textContent = "Save & Proceed to Preliminary Offer";
+            btn.onclick = () => {
+                container.remove();
+                appendUserMessage("Details updated. Proceeding.", false, () => {
+                    streamLog("METADATA_REFRESH: Overriding entity profile data. Re-evaluating credit thresholds.", "Data Updated", () => {
+                        renderBotStep(currentStepIndex + 1);
+                    });
+                });
+            };
+            container.appendChild(btn);
+            chatContainer.appendChild(container);
+            scrollChat();
+        }
+
+        function appendBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = "flex gap-4 fade-in-up items-start";
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-lg bg-[#22368C] flex-none flex items-center justify-center text-white text-[10px] font-black">AI</div>
+                <div class="bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm text-gray-700 max-w-[85%] whitespace-pre-line">${text}</div>
+            `;
+            chatContainer.appendChild(div);
+            scrollChat();
+        }
+
+        function appendUserMessage(text, isTypewriter = false, callback = null) {
+            const div = document.createElement('div');
+            div.className = "flex justify-end fade-in-up";
+            const textDiv = document.createElement('div');
+            textDiv.className = "bg-[#22368C] text-white p-3 px-6 rounded-2xl rounded-tr-none text-sm font-medium";
+            div.appendChild(textDiv);
+            chatContainer.appendChild(div);
+            scrollChat();
+            if (isTypewriter) {
+                textDiv.classList.add('user-typing-cursor');
+                let i = 0;
+                function type() {
+                    if (i < text.length) { textDiv.textContent += text.charAt(i); i++; scrollChat(); setTimeout(type, 15); }
+                    else { textDiv.classList.remove('user-typing-cursor'); if (callback) callback(); }
+                }
+                type();
+            } else { textDiv.textContent = text; if (callback) callback(); }
+        }
+
+        function streamLog(text, status, callback) {
+            const entry = document.createElement('div');
+            entry.className = "log-entry";
+            entry.innerHTML = `<div class="text-[#31D2F2] mb-1 text-[10px]">[${new Date().toLocaleTimeString()}] AGENT_EXECUTE</div>`;
+            const tc = document.createElement('div');
+            tc.className = "text-white/90 font-mono text-[10px] whitespace-pre-line typing-cursor";
+            entry.appendChild(tc);
+            const sc = document.createElement('div');
+            sc.className = "text-[9px] text-gray-500 uppercase mt-1 opacity-0 transition-opacity font-mono";
+            sc.textContent = `STATUS: ${status}`;
+            entry.appendChild(sc);
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            let i = 0;
+            function t() {
+                if (i < text.length) { 
+                    tc.textContent += text.charAt(i); 
+                    i++; 
+                    setTimeout(t, 25); // Increased from 5ms to 25ms for a more realistic orchestration feel
+                }
+                else { 
+                    tc.classList.remove('typing-cursor'); 
+                    sc.classList.remove('opacity-0');
+                    if (callback) setTimeout(callback, 800); // Slight delay after log completion before next bot action
+                }
+            }
+            t();
+        }
+
+        function showTyping(show) { document.getElementById('typing-indicator').classList.toggle('hidden', !show); scrollChat(); }
+        function scrollChat() { chatContainer.scrollTop = chatContainer.scrollHeight; }
+        window.onload = init;
+    </script>
+</body>
+</html>
