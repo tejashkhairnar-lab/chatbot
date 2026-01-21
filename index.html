@@ -196,14 +196,27 @@
             ]}
         ];
 
-        let userData = {
-            legalName: "Standard Publicity Private Limited",
-            pan: "AADCS8891H",
-            industry: "Services - Advertisement",
-            revenue: "11.25 crore",
-            loanPurpose: "Working capital needs",
-            loanAmount: "1.05 crore"
-        };
+        // let userData = {
+        //     legalName: "Standard Publicity Private Limited",
+        //     pan: "AADCS8891H",
+        //     industry: "Services - Advertisement",
+        //     revenue: "11.25 crore",
+        //     loanPurpose: "Working capital needs",
+        //     loanAmount: "1.05 crore"
+        // };
+
+            let userData = {
+                legalName: "Rajchandra Agencies",
+                pan: "AAHFR1988B",
+                industry: "Manufacturing",
+                revenue: "70 lakh",
+                loanPurpose: "Working capital",
+                loanAmount: "14 lakh"
+            };
+
+        
+
+
 
         const sharedUploadSteps = [
             { step: 'bank_prompt', botPrompt: "Great. While I assess your business on the aforementioned data. Would you like to share your last 12 months bank statements from primary bank?", userAction: "", agentNotification: "BSA_ORCHESTRATOR: Awaiting document hook. Triggering standby for feature_engineering_BSA_module", status: "WIP" },
@@ -265,19 +278,19 @@
                 step: 5, 
                 botPrompt: "Understood. Please enter the PAN for this entity.", 
                 userAction: "AAHFR1988B", 
-                agentNotification: "PAN_VAL_AGENT: Validating PAN status and owner structure from NSDL.", 
+                agentNotification: "PAN_VAL_AGENT: Validating PAN status and ownerhip", 
                 status: "PAN Verified" 
             },
             { 
                 step: 6, 
                 botPrompt: "Great. I have your name as \"Rajchandra Agencies\". If you have Udyam registration, please enter the same or enter No.", 
                 userAction: "UDYAM-MH-18-0507851", 
-                agentNotification: "UDYAM_AGENT: Checking MSME classification status.", 
-                status: "Registration Check Done" 
+                agentNotification: "UDYAM_AGENT: Trigger fail.", 
+                status: "Validate manual industry classification" 
             },
             { 
                 step: 7, 
-                botPrompt: "I have got your line of business as trading.Please select your broad industry category.", 
+                botPrompt: "Please select your broad industry category.", 
                 userAction: "", 
                 agentNotification: "SECTOR_AGENT: Benchmarking industry-specific risk parameters.", 
                 status: "Awaiting Selection",
@@ -287,14 +300,14 @@
                 step: 8, 
                 botPrompt: "What is the loan amount required? (Please mention in Lakh or Cr)", 
                 userAction: "25 Lakh", 
-                agentNotification: "EXPOSURE_AGENT: Calculating DPD and leverage ratios for requested ticket size.", 
+                agentNotification: "BUREAU_AGENT: Trigger obligation impact analysis features", 
                 status: "Amount Logged" 
             },
             { 
                 step: 9, 
                 botPrompt: "What is your annual revenue from operations? (Approximate is fine)", 
-                userAction: "1.2 Crore", 
-                agentNotification: "FIN_MODELING_AGENT: Calibrating risk buckets based on stated turnover.", 
+                userAction: "80 lakh", 
+                agentNotification: "Calibrating risk buckets based on stated turnover.", 
                 status: "Revenue Logged" 
             },
             { 
@@ -322,7 +335,10 @@
             { step: 3, botPrompt: "Thank you. I’ve sent a one-time verification code (OTP) to this number.", userAction: "897123", 
             agentNotification: "OTP_VAL: Authenticating session token\n\nBUREAU_AGENT: Triggered\n> Task: Verify NTC\n\nTRIGGER soft-pull features\n>TRIGGER BUREAU_SCORE_AGENT and TRIANGULATION_MODEL features", 
             status: "Verification" },
-            { step: 4, botPrompt: "Are you a GST registered business?", userAction: "Yes", agentNotification: "Routing Logic: Directing to workflow_02=GST_registered.", status: "Awaiting Input" },
+            // { step: 4, botPrompt: "Are you a GST registered business?", userAction: "Yes", agentNotification: "Routing Logic: Directing to workflow_02=GST_registered.", status: "Awaiting Input" }
+            { step: 4, botPrompt: "Are you a GST registered business?", userAction: "Yes", agentNotification: "Routing Logic: Directing to workflow_01=GST_MCA-non_registered", status: "Awaiting Input" },
+
+        
         ];
 
         let activeJourney = [...initialSteps];
